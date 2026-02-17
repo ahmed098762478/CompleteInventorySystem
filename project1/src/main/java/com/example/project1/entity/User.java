@@ -18,6 +18,8 @@
         @Column(name = "password")
         private String password;
 
+
+
         private UserType userType;
 
         public void setUserType(UserType userType) {

@@ -6,9 +6,11 @@ import com.example.project1.entity.UserType;
 import com.example.project1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!postgres")
 public  class DataInitializer implements CommandLineRunner {
 
     @Autowired
