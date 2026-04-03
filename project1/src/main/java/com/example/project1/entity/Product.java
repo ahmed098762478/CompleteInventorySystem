@@ -19,6 +19,9 @@ public class Product {
     @Column(name="prix")
     private double price;
 
+     @ManyToOne(fetch = FetchType.LAZY)
+     CategoryProduct categoryProduct;
+
     // getters et setters
 
 

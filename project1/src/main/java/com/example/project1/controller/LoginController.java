@@ -1,6 +1,7 @@
 package com.example.project1.controller;
 
 import com.example.project1.dto.LoginDTO;
+import com.example.project1.entity.User;
 import com.example.project1.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,5 +19,8 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+
+
+
 
 }
