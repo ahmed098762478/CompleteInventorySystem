@@ -9,13 +9,13 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 @Table(name="category_product")
 public class CategoryProduct {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private  int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name="name_category")
     private String nameCategory;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -23,7 +23,7 @@ public class CategoryProduct {
         return nameCategory;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

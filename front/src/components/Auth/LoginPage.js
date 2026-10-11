@@ -1,138 +1,62 @@
-
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AppContext";
+import { Brand, Field, ThemeToggle } from "../ui/UI";
+import Icon from "../ui/Icon";
 
 export default function LoginPage() {
+  const { user, login } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("ahmed@gmail.com");
+  const [password, setPassword] = useState("ahmed123");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = {};
-
-    if (!email) newErrors.email = "L'email est requis";
-    if (!password) newErrors.password = "Le mot de passe est requis";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    setErrors({});
-    // Demo: pas de backend. On "simule" une connexion puis on revient au site.
-    navigate("/");
+  const formRef = useRef(null);
+  const from = location.state?.from;
+  const destination = typeof from === "string" && (from === "/admin" || from.startsWith("/admin/")) ? from : "/admin";
+  if (user) return <Navigate to={destination} replace />;
+  const submit = (event) => {
+    event.preventDefault();
+    const next = {};
+    if (!email.trim()) next.email = "L’adresse email est requise.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) next.email = "Saisissez une adresse email valide.";
+    if (!password.trim()) next.password = "Le mot de passe est requis.";
+    setErrors(next);
+    if (Object.keys(next).length) { formRef.current?.querySelector(`#login-${Object.keys(next)[0]}`)?.focus(); return; }
+    login(email);
+    navigate(destination, { replace: true });
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Card principale */}
-        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-          {/* Header avec logo */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 grid place-items-center shadow-lg">
-              <span className="text-white font-black text-lg">PS</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">ProductStore</h1>
-              <p className="text-xs text-gray-500">Espace Administration</p>
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-bold text-gray-900 mt-6">Bienvenue</h2>
-          <p className="text-gray-600 mt-2 text-sm">
-            Connecte-toi pour accéder à ton espace d'administration.
-          </p>
-
-          <form onSubmit={onSubmit} className="mt-8 space-y-5">
-            {/* Champ Email */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                📧 Adresse email
-              </label>
-              <input
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setErrors({ ...errors, email: "" });
-                }}
-                className={`w-full border-2 rounded-xl px-4 py-3 outline-none transition ${
-                  errors.email
-                    ? "border-red-300 bg-red-50 focus:ring-2 focus:ring-red-200"
-                    : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                }`}
-                placeholder="user@email.com"
-                type="email"
-              />
-              {errors.email && (
-                <p className="text-red-600 text-xs mt-1 font-medium">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Champ Mot de passe */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                🔒 Mot de passe
-              </label>
-              <input
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setErrors({ ...errors, password: "" });
-                }}
-                className={`w-full border-2 rounded-xl px-4 py-3 outline-none transition ${
-                  errors.password
-                    ? "border-red-300 bg-red-50 focus:ring-2 focus:ring-red-200"
-                    : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                }`}
-                placeholder="••••••••"
-                type="password"
-              />
-              {errors.password && (
-                <p className="text-red-600 text-xs mt-1 font-medium">{errors.password}</p>
-              )}
-            </div>
-
-            {/* Bouton de connexion */}
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all font-semibold flex items-center justify-center gap-2"
-            >
-              <span>🚀</span>
-              <span>Se connecter</span>
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-xs text-gray-500 px-2">ou</span>
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
-
-          {/* Retour au site */}
-          <Link
-            to="/"
-            className="block w-full border-2 border-gray-200 text-gray-700 py-3 rounded-xl text-center hover:bg-gray-50 transition font-semibold"
-          >
-            ← Retour au site
-          </Link>
-
-          {/* Info de démo */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
-            <p className="text-xs text-blue-700 font-medium">
-              💡 Démo : Utilisez n'importe quel email et mot de passe
-            </p>
-          </div>
+    <div className="login-page">
+      <aside className="login-story">
+        <Link to="/" className="login-brand"><Brand inverse subtitle="GESTION DE STOCK" /></Link>
+        <div className="login-story-content">
+          <span className="story-label"><span className="status-dot" />Un stock maîtrisé, chaque jour.</span>
+          <h1>Moins de complexité.<br /><span>Plus de visibilité.</span></h1>
+          <p>Retrouvez vos produits, suivez les quantités et anticipez vos besoins depuis un seul espace.</p>
+          <div className="login-visual" aria-hidden="true"><div className="visual-top"><span className="visual-icon"><Icon name="box" size={24} /></span><span>Votre inventaire<strong>Sous contrôle.</strong></span><span className="visual-check"><Icon name="check" size={18} /></span></div><div className="visual-chart">{[40, 64, 48, 82, 62, 94, 76, 100, 88].map((height, i) => <span key={i} style={{ height: `${height}%` }} />)}</div><div className="visual-bottom"><span><i />Vue d’ensemble du stock</span><Icon name="chart" size={18} /></div></div>
+          <div className="login-benefits"><span><Icon name="check" size={16} />Produits & catégories</span><span><Icon name="check" size={16} />Alertes de stock</span></div>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-xs text-gray-500 mt-6">
-          © 2024 ProductStore. Tous droits réservés.
-        </p>
-      </div>
+        <p className="login-story-footer">L’essentiel pour mieux gérer votre inventaire.</p>
+        <div className="story-decoration" aria-hidden="true" />
+      </aside>
+      <main className="login-main">
+        <div className="login-topbar"><Link to="/" className="back-link"><Icon name="back" size={16} />Retour au site</Link><ThemeToggle /></div>
+        <div className="login-form-wrap">
+          <div className="login-mobile-brand"><Brand /></div>
+          <span className="login-lock"><Icon name="lock" size={25} /></span>
+          <p className="eyebrow">VOTRE ESPACE DE GESTION</p><h2>Heureux de vous retrouver.</h2><p className="login-subtitle">Connectez-vous pour retrouver votre inventaire.</p>
+          <form onSubmit={submit} noValidate ref={formRef} className="login-form">
+            <Field id="login-email" label="Adresse email" error={errors.email}><div className="input-with-icon"><Icon name="mail" size={18} /><input id="login-email" type="email" autoComplete="username" value={email} onChange={(e) => { setEmail(e.target.value); setErrors((previous) => ({ ...previous, email: "" })); }} className={`input ${errors.email ? "input-invalid" : ""}`} placeholder="vous@entreprise.ma" required aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "login-email-error" : undefined} /></div></Field>
+            <Field id="login-password" label="Mot de passe" error={errors.password}><div className="input-with-icon password-input"><Icon name="lock" size={18} /><input id="login-password" type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); setErrors((previous) => ({ ...previous, password: "" })); }} className={`input ${errors.password ? "input-invalid" : ""}`} required aria-invalid={Boolean(errors.password)} aria-describedby={errors.password ? "login-password-error" : undefined} /><button type="button" className="password-toggle" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} aria-pressed={showPassword}><Icon name={showPassword ? "eyeOff" : "eye"} size={19} /></button></div></Field>
+            <button type="submit" className="button button-primary login-submit">Se connecter<Icon name="arrow" size={18} /></button>
+          </form>
+          <div className="login-demo-info"><Icon name="info" size={19} /><div><strong>Découvrez la démonstration</strong><p>Les champs sont préremplis. Vous pouvez aussi utiliser votre propre email et un mot de passe de votre choix.</p></div></div>
+          <p className="login-local-note">Votre inventaire de démonstration est conservé dans ce navigateur.</p>
+        </div>
+        <footer className="login-footer">© {new Date().getFullYear()} ProductStore · Gestion de stock</footer>
+      </main>
     </div>
   );
 }

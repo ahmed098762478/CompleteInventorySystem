@@ -1,60 +1,26 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { useInventory } from "../../context/AppContext";
+import { Brand } from "../ui/UI";
+import Icon from "../ui/Icon";
 
-export default function Sidebar() {
-  const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl transition
-     ${
-       isActive
-         ? "bg-blue-600 text-white shadow"
-         : "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-     }`;
-
+export default function Sidebar({ onNavigate }) {
+  const { products, categories } = useInventory();
+  const navClass = ({ isActive }) => `sidebar-link ${isActive ? "is-active" : ""}`;
   return (
-    <aside className="w-72 hidden md:block">
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 sticky top-24">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2">
-          Navigation
-        </p>
-
-        <nav className="mt-3 space-y-2">
-          <NavLink to="/" end className={navLinkClass}>
-            <span className="h-9 w-9 rounded-xl bg-gray-100 grid place-items-center">
-              🏠
-            </span>
-            <div className="flex flex-col">
-              <span className="font-semibold">Accueil</span>
-              <span className="text-xs opacity-80">Vue générale</span>
-            </div>
-          </NavLink>
-
-          <NavLink to="/products" className={navLinkClass}>
-            <span className="h-9 w-9 rounded-xl bg-gray-100 grid place-items-center">
-              📦
-            </span>
-            <div className="flex flex-col">
-              <span className="font-semibold">Produits</span>
-              <span className="text-xs opacity-80">Liste & gestion</span>
-            </div>
-          </NavLink>
-
-          <NavLink to="/add-product" className={navLinkClass}>
-            <span className="h-9 w-9 rounded-xl bg-gray-100 grid place-items-center">
-              ➕
-            </span>
-            <div className="flex flex-col">
-              <span className="font-semibold">Ajouter</span>
-              <span className="text-xs opacity-80">Nouveau produit</span>
-            </div>
-          </NavLink>
-        </nav>
-
-        {/* Bloc info */}
-        <div className="mt-6 rounded-2xl bg-gradient-to-br from-blue-50 to-white border border-blue-100 p-4">
-          <p className="text-sm font-semibold text-gray-900">Astuce ✨</p>
-          <p className="text-sm text-gray-600 mt-1">
-            Clique sur “+ Ajouter” pour créer un produit rapidement.
-          </p>
-        </div>
+    <aside className="sidebar">
+      <Link to="/admin" className="sidebar-brand" onClick={onNavigate}><Brand inverse subtitle="GESTION DE STOCK" /></Link>
+      <div className="workspace-label"><span className="workspace-avatar">PS</span><span>Mon espace<small>Inventaire de démonstration</small></span></div>
+      <p className="sidebar-section">ESPACE DE GESTION</p>
+      <nav className="sidebar-nav" aria-label="Navigation de gestion">
+        <NavLink to="/admin" end className={navClass} onClick={onNavigate}><Icon name="dashboard" /><span>Tableau de bord</span></NavLink>
+        <NavLink to="/admin/products" className={navClass} onClick={onNavigate}><Icon name="box" /><span>Produits</span><small>{products.length}</small></NavLink>
+        <NavLink to="/admin/categories" className={navClass} onClick={onNavigate}><Icon name="layers" /><span>Catégories</span><small>{categories.length}</small></NavLink>
+        <NavLink to="/admin/add-product" className={navClass} onClick={onNavigate}><Icon name="plus" /><span>Ajouter un produit</span></NavLink>
+      </nav>
+      <div className="sidebar-bottom">
+        <div className="sidebar-tip"><span className="tip-icon"><Icon name="shield" /></span><strong>Votre stock, en un coup d’œil.</strong><p>Des données claires pour mieux organiser votre inventaire.</p></div>
+        <Link className="sidebar-site-link" to="/" onClick={onNavigate}><Icon name="back" size={17} />Retour au site</Link>
+        <p className="sidebar-version">ProductStore · Version démo</p>
       </div>
     </aside>
   );

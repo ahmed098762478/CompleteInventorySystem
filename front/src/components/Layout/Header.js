@@ -1,38 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AppContext";
+import { ThemeToggle } from "../ui/UI";
+import Icon from "../ui/Icon";
 
-export default function Header() {
+export default function Header({ onMenu, menuOpen, menuButtonRef }) {
+  const { pathname } = useLocation();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const current = pathname.includes("categories") ? "Catégories" : pathname.includes("add-product") ? "Ajouter un produit" : pathname.endsWith("/edit") ? "Modifier un produit" : pathname.includes("products") ? "Produits" : "Tableau de bord";
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur border-b border-gray-200">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex items-center justify-between">
-        {/* Brand */}
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-blue-600 grid place-items-center shadow">
-            <span className="font-black text-white">A</span>
-          </div>
-          <div className="leading-tight">
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900">
-              Mon Application
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-500">
-              Gestion des produits
-            </p>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <Link
-            to="/add-product"
-            className="hidden sm:inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition"
-          >
-            + Ajouter
-          </Link>
-
-          {/* Avatar */}
-          <div className="h-10 w-10 rounded-full bg-gray-200 grid place-items-center">
-            <span className="text-sm font-semibold text-gray-700">UI</span>
-          </div>
-        </div>
+    <header className="admin-header">
+      <div className="header-leading">
+        <button ref={menuButtonRef} type="button" className="icon-button mobile-menu-button" onClick={onMenu} aria-label="Ouvrir le menu" aria-expanded={menuOpen}><Icon name="menu" /></button>
+        <div className="breadcrumbs"><Link to="/admin">Espace de gestion</Link><Icon name="chevron" size={13} /><span>{current}</span></div>
+      </div>
+      <div className="header-trailing">
+        <span className="demo-pill"><span className="status-dot" />Démo</span>
+        <ThemeToggle />
+        <span className="header-divider" />
+        <div className="user-profile"><span className="avatar">{user.email.slice(0, 2).toUpperCase()}</span><span className="user-copy"><strong>Gestionnaire</strong><small>{user.email}</small></span></div>
+        <button type="button" className="icon-button" title="Se déconnecter" aria-label="Se déconnecter" onClick={() => { logout(); navigate("/login", { replace: true }); }}><Icon name="logout" size={19} /></button>
       </div>
     </header>
   );

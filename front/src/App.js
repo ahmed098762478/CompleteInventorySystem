@@ -1,36 +1,38 @@
-import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-// Site statique (une seule page)
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { AppProviders, useAuth } from "./context/AppContext";
 import SitePage from "./components/site/pages/SitePage";
-
-// Login
 import LoginPage from "./components/Auth/LoginPage";
-
-// Admin (tes composants existants)
 import Layout from "./components/Layout/Layout";
+import Dashboard from "./components/Dashboard";
 import ProductTable from "./components/Product/ProductTable";
 import AddProduct from "./components/Product/AddProduct";
+import CategoryTable from "./components/Category/CategoryTable";
+import { EmptyState } from "./components/ui/UI";
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* SITE STATIQUE (une seule page avec tous les composants) */}
-        <Route path="/" element={<SitePage />} />
-
-        {/* LOGIN */}
-        <Route path="/login" element={<LoginPage />} />
-
-        {/* ADMIN */}
-        <Route path="/admin" element={<Layout />}>
-          <Route index element={<div className="text-center">Admin Home</div>} />
-          <Route path="products" element={<ProductTable />} />
-          <Route path="add-product" element={<AddProduct />} />
-        </Route>
-      </Routes>
-    </Router>
-  );
+function RequireSession({ children }) {
+  const { user } = useAuth();
+  const location = useLocation();
+  return user ? children : <Navigate to="/login" state={{ from: location.pathname }} replace />;
 }
 
-export default App;
+export default function App() {
+  return (
+    <AppProviders>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<SitePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin" element={<RequireSession><Layout /></RequireSession>}>
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<ProductTable />} />
+            <Route path="add-product" element={<AddProduct />} />
+            <Route path="products/:id/edit" element={<AddProduct />} />
+            <Route path="categories" element={<CategoryTable />} />
+            <Route path="*" element={<EmptyState title="Page introuvable" description="Cet écran n’existe pas." to="/admin" action="Retour au tableau de bord" />} />
+          </Route>
+          <Route path="*" element={<div className="standalone-empty"><EmptyState title="Page introuvable" description="Retrouvez la présentation de ProductStore." to="/" action="Retour à l’accueil" /></div>} />
+        </Routes>
+      </BrowserRouter>
+    </AppProviders>
+  );
+}

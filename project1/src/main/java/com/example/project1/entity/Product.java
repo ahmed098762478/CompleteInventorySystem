@@ -20,8 +20,28 @@ public class Product {
     private double price;
 
      @ManyToOne(fetch = FetchType.LAZY)
-     CategoryProduct categoryProduct;
+     @JoinColumn(name="category_product_id")
+     private CategoryProduct categoryProduct;
 
+      @ManyToOne(fetch= FetchType.LAZY)
+      @JoinColumn(name="brand_product_id")
+      private BrandProduct brandProduct;
+
+      public void setCategoryProduct(CategoryProduct categoryProduct){
+          this.categoryProduct = categoryProduct;
+      }
+
+      public void setBrandProduct(BrandProduct brandProduct){
+          this.brandProduct=brandProduct;
+    }
+
+    public CategoryProduct getCategoryProduct() {
+        return categoryProduct;
+    }
+
+    public BrandProduct getBrandProduct() {
+        return brandProduct;
+    }
     // getters et setters
 
 

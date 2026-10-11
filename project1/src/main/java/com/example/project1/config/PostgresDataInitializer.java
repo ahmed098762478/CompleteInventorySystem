@@ -27,11 +27,11 @@ public class PostgresDataInitializer implements CommandLineRunner {
         userRepository.save(admin);
 
         User manager = new User();
-        manager.setNameUser("postgres_manager");
+        manager.setNameUser("fournisseur");
         manager.setPhone("0634444444");
-        manager.setMail("manager@postgres.com");
-        manager.setPassword("manager123");
-        manager.setUserType(UserType.MANAGER);
+        manager.setMail("fournisseur@postgres.com");
+        manager.setPassword("fournisseur123");
+        manager.setUserType(UserType.SUPPLIER);
         userRepository.save(manager);
 
         System.out.println("PostgreSQL data initialized.");

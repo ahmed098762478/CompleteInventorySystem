@@ -32,11 +32,11 @@ public  class DataInitializer implements CommandLineRunner {
 
 
         User manager = new User();
-        manager.setNameUser("manager");
+        manager.setNameUser("fournisseur");
         manager.setPhone("0634444444");
-        manager.setMail("manager@gmail.com");
-        manager.setPassword("manager123");
-        manager.setUserType(UserType.MANAGER);
+        manager.setMail("fournisseur@gmail.com");
+        manager.setPassword("fournisseur123");
+        manager.setUserType(UserType.SUPPLIER);
         userRepository.save(manager);
         System.out.println("User manager is created successefully");
         System.out.println("User manager details : "+manager.getNameUser());
